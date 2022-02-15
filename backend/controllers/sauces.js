@@ -42,7 +42,39 @@ exports.getAllSauces = (req, res, next) => {
 };
 
 exports.modifySauce = (req, res, next) => {
+    let checkedSave = true;
+    if(req.file) {
+        Sauce.findOne({ _id: req.params.id })
+            .then(sauce => {
+                const filename = sauce.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filename}`, (err) => {
+                    if(err) throw err;
+                });
+            })
+            .catch(error => res.status(400).json({ error }));
+    }
 
+    const sauceObject = req.file ?
+        {
+            ...JSON.parse(req.body.sauce),
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {...req.body};
+
+    let arrayValues = Object.values(sauceObject);
+    for(value in arrayValues) {
+        if(validator.contains(arrayValues[value].toString(), '$') || validator.contains(arrayValues[value].toString(), '=')) {
+            console.log('La saisie suivante est invalide: ' + arrayValues[value]);
+            checkedSave = false;
+        };
+    };
+
+    if(checkedSave) {
+        Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
+            .then(() => res.status(200).json({ message: 'Sauce modifiée'}))
+            .catch(error => res.status(400).json({ error }));
+    } else {
+        res.status(401).json({ error: 'Présence de caractères non autorisés'});
+    };
 };
 
 exports.deleteSauce = (req, res, next) => {

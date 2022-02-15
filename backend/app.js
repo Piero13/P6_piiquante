@@ -4,13 +4,14 @@ const express = require ('express');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const path = require('path');
+const bodyParser = require('body-parser');
 const sauceRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 
 const app = express();
 
 app.use(helmet());
-
+app.disable("x-powered-by");
 app.use(express.json());
 
 mongoose.connect('mongodb+srv://' + process.env.MDB_user + ':' + process.env.MDB_pw + '@pfdw13.egmg9.mongodb.net/pfdw13piiquante?retryWrites=true&w=majority',
@@ -25,6 +26,9 @@ app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     next();
 });
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 app.use(mongoSanitize({
     replaceWith: '_'
