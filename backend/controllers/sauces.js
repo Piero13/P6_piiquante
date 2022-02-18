@@ -91,5 +91,29 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-
+    Sauce.findOne({ _id: req.params.id })
+        .then(sauce => {
+            if(sauce.usersDisliked.indexOf(req.body.userId) == -1 && sauce.usersLiked.indexOf(req.body.userId) == -1) {
+                if(req.body.like == 1) {
+                    sauce.usersLiked.push(req.body.userId);
+                    sauce.likes += req.body.like;
+                } else if(req.body.like == -1) {
+                    sauce.usersDisliked.push(req.body.userId);
+                    sauce.dislikes -= req.body.like;
+                };
+            };
+            if(sauce.usersLiked.indexOf(req.body.userId) != -1 && req.body.like == 0) {
+                const likesUserIndex = sauce.usersLiked.findIndex(user => user === req.body.userId);
+                sauce.usersLiked.splice(likesUserIndex, 1);
+                sauce.likes -= 1;
+            };
+            if(sauce.usersDisliked.indexOf(req.body.userId) != -1 && req.body.like == 0) {
+                const likesUserIndex = sauce.usersDisliked.findIndex(user => user === req.body.userId);
+                sauce.usersDisliked.splice(likesUserIndex, 1);
+                sauce.dislikes -= 1;
+            }
+            sauce.save();
+            res.status(201).json({ message: 'Like / Dislike mis à jour' });
+        })
+        .catch(error => res.status(500).json({ error }));
 };
