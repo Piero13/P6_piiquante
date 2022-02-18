@@ -12,14 +12,12 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
-app.use(helmet());
-app.disable("x-powered-by");
-app.use(express.json());
-
 mongoose.connect('mongodb+srv://' + process.env.MDB_user + ':' + process.env.MDB_pw + '@pfdw13.egmg9.mongodb.net/pfdw13piiquante?retryWrites=true&w=majority',
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+app.use(helmet());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -29,8 +27,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(express.json());
 
 app.use(mongoSanitize({
     replaceWith: '_'
