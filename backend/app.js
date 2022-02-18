@@ -1,10 +1,12 @@
 require('dotenv').config();
-const mongoose = require('mongoose');
+
 const express = require ('express');
+const mongoose = require('mongoose');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const path = require('path');
 const bodyParser = require('body-parser');
+
 const sauceRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 
