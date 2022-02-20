@@ -5,12 +5,13 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const path = require('path');
-const bodyParser = require('body-parser');
 
 const sauceRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 
 const app = express();
+
+app.use(express.json());
 
 // Protection contre certaines vulnérabilité connues
 app.use(helmet());
@@ -29,11 +30,6 @@ app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     next();
 });
-
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-app.use(express.json());
 
 // Protection contre l'injection en remplaçant les caractères interdits
 app.use(mongoSanitize({
