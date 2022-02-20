@@ -1,5 +1,6 @@
 const multer = require('multer');
 
+// Tableau des extensions autorisées
 const MIME_TYPES = {
     'image/jpg': 'jpg',
     'image/jpeg': 'jpg',
@@ -7,9 +8,11 @@ const MIME_TYPES = {
 };
 
 const storage = multer.diskStorage({
+    // Enregistrement des fichiers deans le dossier "images"
     destination: (req, file, callback) => {
         callback(null, 'images');
     },
+    // Création du nom du fichier de l'image
     filename: (req, file, callback) => {
         const name = file.originalname.split(' ').join('_').split('.')[0];
         const extension = MIME_TYPES[file.mimetype];

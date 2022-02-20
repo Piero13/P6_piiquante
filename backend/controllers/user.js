@@ -5,6 +5,7 @@ const validator = require('validator');
 
 /* Fonction d'inscription */ 
 exports.signup = (req, res, next) => {
+    // Vérification de la validité de l'adresse email et salage du mot de passe
     if(validator.isEmail(req.body.email, {blacklisted_chars: '$="'})) {
         bcrypt.hash(req.body.password, 10)
             .then(hash => {
@@ -25,14 +26,17 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
         .then(user => {
+            // Vérification de l'email utilisateur
             if(!user) {
                 return res.status(401).json({ error: 'Utilisateur inconnu'});
             }
+            // Vérification du mot de passe
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if(!valid) {
                         return res.status(401).json({ error: 'Mot de passe incorrect'});
                     }
+                    // Validation si ok
                     res.status(200).json({
                         userId: user._id,
                         token: jwt.sign(

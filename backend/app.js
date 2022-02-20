@@ -12,13 +12,16 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
+// Protection contre certaines vulnérabilité connues
+app.use(helmet());
+
+// Connexion à la base de données
 mongoose.connect('mongodb+srv://' + process.env.MDB_user + ':' + process.env.MDB_pw + '@pfdw13.egmg9.mongodb.net/pfdw13piiquante?retryWrites=true&w=majority',
     { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use(helmet());
-
+// Pour empêcher les erreurs de CORS
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -27,12 +30,16 @@ app.use((req, res, next) => {
     next();
 });
 
+
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(express.json());
 
+// Protection contre l'injection en remplaçant les caractères interdits
 app.use(mongoSanitize({
     replaceWith: '_'
 }));
+
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/sauces', sauceRoutes);
