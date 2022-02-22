@@ -42,6 +42,7 @@ const errorHandler = error => {
 
 const server = http.createServer(app);
 
+// le port se connecte
 server.on('error', errorHandler);
 server.on('listening', () => {
     const address = server.address();

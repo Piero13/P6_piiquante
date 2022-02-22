@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
 
         // Comparaison du userId de la requête et celui du token
         if(req.body.userId && req.body.userId !== userId) {
+            res.status(403).json({ message: 'Requête non autorisée' });
             throw 'User Id invalide'
         } else {
             next();
