@@ -11,7 +11,6 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
-app.disable("x-powered-by");
 app.use(express.json());
 
 // Protection contre certaines vulnérabilité connues
