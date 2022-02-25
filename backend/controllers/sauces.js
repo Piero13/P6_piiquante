@@ -66,7 +66,7 @@ exports.modifySauce = (req, res, next) => {
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : {...req.body};
 
-    // Vérification des entrées
+    // Vérification et validation des entrées
     let arrayValues = Object.values(sauceObject);
     for(value in arrayValues) {
         if(validator.contains(arrayValues[value].toString(), '$') || validator.contains(arrayValues[value].toString(), '=')) {
