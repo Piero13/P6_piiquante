@@ -29,24 +29,27 @@ exports.login = (req, res, next) => {
             // Vérification de l'email utilisateur
             if(!user) {
                 return res.status(401).json({ error: 'Utilisateur inconnu'});
-            }
+            } else {
             // Vérification du mot de passe
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
                     if(!valid) {
                         return res.status(401).json({ error: 'Mot de passe incorrect'});
-                    }
-                    // Si ok validation de la connexion et attribution d'un token d'authentifcation
-                    res.status(200).json({
-                        userId: user._id,
-                        token: jwt.sign(
+                    } else {
+                        // Si ok validation de la connexion et attribution d'un token d'authentifcation
+                        let token = jwt.sign(
                             {userId: user._id},
                             process.env.SECRET_TOKEN,
-                            { expiresIn: '24h' }
-                        )
-                    });
+                            { expiresIn: '24h' }                        
+                        );
+                        res.status(200).json({
+                            userId: user._id,
+                            token: token
+                        });
+                    }
                 })
                 .catch(error => res.status(500).json({ error }));
+            };
         })
         .catch(error => res.status(500).json({ error }));
 };
